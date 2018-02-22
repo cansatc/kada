@@ -2,7 +2,7 @@ import functions;
 from functions import *;
 
 while 1:
-    stdout_message = ser.readline().strip().decode('utf-8').replace('0xad', '');
+    stdout_message = ser.readline().strip().decode('utf-8', 'ignore');
     print(stdout_message);
 
     if stdout_message == "Transfer Sequence Start":

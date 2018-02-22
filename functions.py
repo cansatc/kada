@@ -40,22 +40,23 @@ line_count = 0;
 def save_img(fo_test):
     global line_count;
 
-    receive_img_data = truncate(ser.readline().decode(), 10); #一行データ受け取り
+    receive_img_data = ser.readline().replace(b'\xad', b'').replace(b'\x84', b'').replace(b'\x0f', b'').replace(b'}', b'').replace(b'm', b'').strip().decode('utf-8', 'ignore'); #一行データ受け取り
 
     print("Receive line_data( %d )" % line_count);
+    print(receive_img_data);
 
-    receive_checksum = ser.read(2); #チェックサム受取
+    receive_checksum = ser.readline().replace(b'\xad', b'').replace(b'\x84', b'').replace(b'\x0f', b'').replace(b'}', b'').replace(b'm', b'').strip().decode('utf-8', 'ignore'); #チェックサム受取
     print("Receive checksum");
 
     checksum = 0;
     #一行分のデータを足し合わせる
     for i in range(len(receive_img_data)):
-        checksum += receive_img_data[i];
+        checksum += ord(receive_img_data[i]);
 
-    print(receive_img_data);
+    print(checksum);
     print(receive_checksum);
 
-    if checksum == receive_checksum: #チェックサムが一致した時
+    if checksum == int(receive_checksum): #チェックサムが一致した時
         fo_test.write(receive_img_data.strip().encode('utf-8')); #受信データを保存ファイルに追記
 
         ser.write(b'1');
